@@ -1,7 +1,15 @@
+# ignore ALL .log files
+*.log
 
-.anchor
-.DS_Store
-target
-**/*.rs.bk
-node_modules
-test-ledger
+# ignore ALL files in ANY directory named temp
+temp/
+
+# ignore all vim configuration  files
+*.vim
+
+/target
+/node_modules
+/test-ledger
+
+.gitignore
+
