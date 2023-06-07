@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("FCChUjoAnEeFT4WzMgQLn2dBcXwYnL6XQkj5NumGF6AE");
 
 #[program]
 pub mod solana_twitter {
@@ -11,16 +11,35 @@ pub mod solana_twitter {
         topic: String,
         tweet_content: String,
     ) -> Result<()> {
-        let my_tweet = send_tweet_ctx.accounts.my_tweet;
+        if topic.chars().count() > 50 {
+            //throw an error
+            return err!(TweetErrors::TopicTooLong);
+        }
+
+        if tweet_content.chars().count() > 200 {
+            //throw an error
+            return err!(TweetErrors::ContentTooLong);
+        }
+
+        let my_tweet = &mut send_tweet_ctx.accounts.my_tweet;
+        let sender_of_tweet = &send_tweet_ctx.accounts.sender_of_tweet;
+        let clock = Clock::get().unwrap();
+
+        my_tweet.author = *sender_of_tweet.key;
+        my_tweet.timestamp = clock.unix_timestamp;
+        my_tweet.topic = topic;
+        my_tweet.content = tweet_content;
+
         Ok(())
     }
+}
 
-    /*
-        pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-            let dd = "hello";
-            Ok(())
-        }
-    */
+#[error_code]
+pub enum TweetErrors {
+    #[msg("topic should be less than 50 chars")]
+    TopicTooLong,
+    #[msg("content should be less than 200 chars")]
+    ContentTooLong,
 }
 
 #[derive(Accounts)]
