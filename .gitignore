@@ -7,6 +7,9 @@ temp/
 # ignore all vim configuration  files
 *.vim
 
+# ignore anchor files
+/.anchor
+
 /target
 /node_modules
 /test-ledger
